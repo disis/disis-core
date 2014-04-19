@@ -1,4 +1,4 @@
-package disis.core;
+package disis.core.utils;
 
 /**
  * This is DISIS

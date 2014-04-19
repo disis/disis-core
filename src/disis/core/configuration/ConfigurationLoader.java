@@ -1,7 +1,7 @@
 package disis.core.configuration;
 
 import com.google.gson.Gson;
-import disis.core.TextFacility;
+import disis.core.utils.TextFacility;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
