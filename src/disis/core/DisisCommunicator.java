@@ -1,5 +1,8 @@
 package disis.core;
 
+import disis.core.configuration.DisisConfiguration;
+import disis.core.configuration.LocalConfiguration;
+
 /**
  * This is DISIS
  * Authors: Jirka Penzes & Jan Voracek

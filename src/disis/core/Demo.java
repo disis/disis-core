@@ -1,5 +1,10 @@
 package disis.core;
 
+import disis.core.configuration.ConfigurationLoader;
+import disis.core.configuration.DisisConfiguration;
+import disis.core.configuration.LocalConfiguration;
+
+import java.io.File;
 import java.util.HashMap;
 
 /**
@@ -13,8 +18,13 @@ public class Demo {
     private static boolean ready;
 
     public static void main(String[] args) {
-        LocalConfiguration localConfiguration = LocalConfiguration.load();
+        String configurationPath = new File("src/disis/sample/demo1/configuration-sample.disis").getAbsolutePath();
+        LocalConfiguration localConfiguration = ConfigurationLoader.load(configurationPath);
+
+        System.exit(0);
+
         DisisCommunicator communicator = new DisisCommunicator();
+
 
         communicator.start(localConfiguration);
         for (DisisConfiguration disisConfiguration : localConfiguration.getSurroundingServices()) {
