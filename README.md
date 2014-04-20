@@ -5,6 +5,7 @@ Distributed Simulation Infrastructure
 
 
 Class header signature
+----------------------
 
 ```java
 /**
@@ -14,8 +15,15 @@ Class header signature
  */
 ```
 
-Local configuration sample
+Running Java RMI from IntelliJ IDEA
+---------------------------------
+1. Edit run configuration
+2. Add VM option -Djava.rmi.server.codebase=file:PATH_TO_YOUR_PROJECT/out/production/RmiTest/
 
+Note: Replace PATH_TO_YOUR_PROJECT with path to your project :)
+
+Local configuration sample
+--------------------------
 ```json
 {
     "local-name":"disis1",
