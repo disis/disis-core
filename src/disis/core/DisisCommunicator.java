@@ -17,7 +17,7 @@ public class DisisCommunicator {
         return true;
     }
 
-    public void distributeBroadcastInternalMessage() {
+    public void sendInternalBroadcastMessage(InternalMessage message) {
 
     }
 }
