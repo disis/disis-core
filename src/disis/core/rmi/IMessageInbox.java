@@ -1,6 +1,7 @@
 package disis.core.rmi;
 
 import disis.core.IMessage;
+import disis.core.ReceivedMessageListener;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -12,4 +13,6 @@ import java.rmi.RemoteException;
  */
 public interface IMessageInbox extends Remote {
     void sendMessage(IMessage message) throws RemoteException;
+
+    void onReceivedMessage(ReceivedMessageListener receivedMessageListener);
 }

@@ -25,6 +25,9 @@ public class DisisCommunicator {
     public void start(LocalConfiguration localConfiguration) {
         try {
             localMessageInbox = new RmiMessageInbox();
+            localMessageInbox.onReceivedMessage(message -> {
+                // do something
+            });
             Naming.rebind(localConfiguration.getLocalName(), localMessageInbox);
         } catch (RemoteException | MalformedURLException e) {
             e.printStackTrace();
