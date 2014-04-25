@@ -55,5 +55,5 @@ Local configuration sample
 The start command of DISIS: 
 
 ```
-system:~ root$ disis local-configuration.disis
+system:~ root$ disis local-configuration.json
 ```

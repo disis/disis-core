@@ -13,7 +13,7 @@ import java.io.File;
 public class Demo {
 
     public static void main(String[] args) {
-        String configurationPath = new File("src/disis/sample/demo1/configuration-sample.disis").getAbsolutePath();
+        String configurationPath = new File("src/disis/sample/demo1/configuration-sample.json").getAbsolutePath();
         LocalConfiguration localConfiguration = ConfigurationLoader.load(configurationPath);
 
         DisisCommunicator communicator = new DisisCommunicator();
