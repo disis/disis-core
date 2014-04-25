@@ -22,7 +22,7 @@ Running Java RMI from IntelliJ IDEA
 
 Note: Replace PATH_TO_YOUR_PROJECT with path to your project :)
 
-Local configuration sample
+Configuration sample
 --------------------------
 ```json
 {
@@ -55,5 +55,5 @@ Local configuration sample
 The start command of DISIS: 
 
 ```
-system:~ root$ disis local-configuration.json
+system:~ root$ disis configuration.json
 ```
