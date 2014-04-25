@@ -5,7 +5,7 @@ package disis.core;
  * Authors: Jirka Penzes & Jan Voracek
  * Date: 14. 4. 2014 22:58
  */
-public class InternalMessage {
+public class InternalMessage implements IMessage {
     private String message;
 
     public InternalMessage(String message) {

@@ -15,7 +15,7 @@ public class DisisService {
     private DisisCommunicator communicator;
     private LocalConfiguration configuration;
 
-    private Map<String, Boolean> connectedSurrounding = new HashMap<String, Boolean>();
+    private Map<String, Boolean> connectedSurrounding = new HashMap<>();
     private boolean ready = false;
 
     public DisisService(DisisCommunicator communicator, LocalConfiguration configuration) {
