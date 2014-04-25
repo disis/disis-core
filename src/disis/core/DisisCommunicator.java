@@ -43,6 +43,12 @@ public class DisisCommunicator {
     }
 
     public void sendInternalBroadcastMessage(InternalMessage message) {
-
+        for(IMessageInbox messageInbox : remoteMessageInboxes.values()) {
+            try {
+                messageInbox.sendMessage(message);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
