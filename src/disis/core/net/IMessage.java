@@ -1,4 +1,4 @@
-package disis.core;
+package disis.core.net;
 
 /**
  * This is DISIS
@@ -6,5 +6,6 @@ package disis.core;
  * Date: 25. 4. 2014 17:09
  */
 public interface IMessage {
+
     String getMessage();
 }

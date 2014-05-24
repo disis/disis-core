@@ -1,4 +1,6 @@
-package disis.core;
+package disis.core.net.listeners;
+
+import disis.core.IMessage;
 
 /**
  * This is DISIS
@@ -6,5 +8,6 @@ package disis.core;
  * Date: 25. 4. 2014 17:29
  */
 public interface ReceivedMessageListener {
+
     void messageReceived(IMessage message);
 }
