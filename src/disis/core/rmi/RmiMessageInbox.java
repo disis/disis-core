@@ -1,7 +1,8 @@
 package disis.core.rmi;
 
-import disis.core.IMessage;
-import disis.core.ReceivedMessageListener;
+import disis.core.IMessageInbox;
+import disis.core.net.IMessage;
+import disis.core.net.listeners.ReceivedMessageListener;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -15,20 +16,31 @@ import java.util.List;
  */
 public class RmiMessageInbox extends UnicastRemoteObject implements IMessageInbox {
 
-    private List<ReceivedMessageListener> messageListeners = new ArrayList<>();
+    private final List<ReceivedMessageListener> messageListeners;
+    private final List<IMessage> receivedMessages;
 
     public RmiMessageInbox() throws RemoteException {
+        super();
+        messageListeners = new ArrayList<>();
+        receivedMessages = new ArrayList<>();
     }
 
     @Override
     public void sendMessage(IMessage message) throws RemoteException {
+        receivedMessages.add(message);
+
         for (ReceivedMessageListener listener : messageListeners) {
             listener.messageReceived(message);
         }
     }
 
     @Override
-    public void onReceivedMessage(ReceivedMessageListener receivedMessageListener) {
-        messageListeners.add(receivedMessageListener);
+    public List<IMessage> getReceivedMessages() throws RemoteException {
+        return receivedMessages;
+    }
+
+    @Override
+    public List<ReceivedMessageListener> getReceivedMessageListeners() throws RemoteException {
+        return messageListeners;
     }
 }

@@ -1,6 +1,6 @@
 package disis.core.net.listeners;
 
-import disis.core.IMessage;
+import disis.core.net.IMessage;
 
 /**
  * This is DISIS

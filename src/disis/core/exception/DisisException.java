@@ -5,5 +5,9 @@ package disis.core.exception;
  * Authors: Jirka Penzes & Jan Voracek
  * Date: 24/05/14 15:11
  */
-public class DisisException {
+public class DisisException extends RuntimeException {
+
+    public DisisException() {
+        super("Argh!!! - You don't want this!");
+    }
 }

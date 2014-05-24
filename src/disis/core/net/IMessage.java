@@ -7,5 +7,9 @@ package disis.core.net;
  */
 public interface IMessage {
 
+    String getSenderName();
+
+    String getSenderFullName();
+
     String getMessage();
 }

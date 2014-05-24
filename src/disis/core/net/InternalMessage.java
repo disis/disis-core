@@ -1,7 +1,5 @@
 package disis.core.net;
 
-import disis.core.IMessage;
-
 import java.io.Serializable;
 
 /**
@@ -9,11 +7,12 @@ import java.io.Serializable;
  * Authors: Jirka Penzes & Jan Voracek
  * Date: 14. 4. 2014 22:58
  */
-public class InternalMessage implements Serializable, IMessage {
+public class InternalMessage extends DisisMessage implements Serializable {
 
     private String message;
 
-    public InternalMessage(String message) {
+    public InternalMessage(String senderFullName, String message) {
+        super(senderFullName);
         this.message = message;
     }
 

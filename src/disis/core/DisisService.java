@@ -2,7 +2,15 @@ package disis.core;
 
 import disis.core.configuration.DisisConfiguration;
 import disis.core.configuration.LocalConfiguration;
+import disis.core.exception.DisisCommunicatorException;
+import disis.core.exception.DisisException;
+import disis.core.net.IMessage;
+import disis.core.net.MessageBuilder;
+import disis.core.net.ReadyMessage;
+import disis.core.net.listeners.ConsoleListener;
+import disis.core.utils.ThreadHelper;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,61 +20,109 @@ import java.util.Map;
  * Date: 14. 4. 2014 22:40
  */
 public class DisisService {
+
     private DisisCommunicator communicator;
     private LocalConfiguration configuration;
-
-    private Map<String, Boolean> connectedSurrounding = new HashMap<>();
+    private IMessageInboxFactory messageInboxFactory;
+    private IMessageInbox localMessageBox;
+    private Map<String, DisisContainer> connectedSurrounding = new HashMap<>();
     private boolean ready = false;
 
-    public DisisService(DisisCommunicator communicator, LocalConfiguration configuration) {
+    private static final Object locker = new Object();
+
+    public DisisService(DisisCommunicator communicator, LocalConfiguration configuration, IMessageInboxFactory messageInboxFactory) {
         this.communicator = communicator;
         this.configuration = configuration;
+        this.messageInboxFactory = messageInboxFactory;
     }
 
     public void start() {
-        startCommunicator();
-        connectToSurroundingServices();
-        sendReadyMessage();
+        startLocalEnvironment(); // RMI
+        startPublicEnvironment();  // REST
+    }
+
+    public void startLocalEnvironment() {
+        try {
+            startCommunicator();
+            connectToSurroundingServices();
+        } catch (RemoteException exception) {
+            throw new DisisException();
+        }
+    }
+
+    public void startPublicEnvironment() {
+        // TODO start REST API
+    }
+
+    private void sendReadyMessage() throws DisisCommunicatorException {
+        IMessage readyMessage = MessageBuilder.createReadyBroadcastMessage(getFullName());
+        sendInternalBroadcastMessage(readyMessage);
     }
 
     public boolean isReady() {
         return ready;
     }
 
-    private void sendReadyMessage() {
-        InternalMessage message = new InternalMessage("ready");
-        communicator.sendInternalBroadcastMessage(message);
+    private void sendInternalBroadcastMessage(String message) throws DisisCommunicatorException {
+        IMessage internalMessage = MessageBuilder.createInternalBroadcastMessage(getFullName(), message);
+        sendInternalBroadcastMessage(internalMessage);
     }
 
-    private void connectToSurroundingServices() {
+    private void sendInternalBroadcastMessage(IMessage message) throws DisisCommunicatorException {
+        for (DisisContainer disisContainer : connectedSurrounding.values()) {
+            System.out.println(configuration.getLocalName() + ": sending message to " + disisContainer.getName() + " (" + message.getMessage() + ")");
+            communicator.sendMessage(message, disisContainer.getInbox());
+        }
+    }
+
+    private void connectToSurroundingServices() throws RemoteException {
         for (DisisConfiguration disisConfiguration : configuration.getSurroundingServices()) {
-            boolean connected = communicator.connect(disisConfiguration);
-            connectedSurrounding.put(disisConfiguration.getRemoteName(), connected);
+            synchronized (locker) {
+                DisisContainer disisContainer = communicator.connect(disisConfiguration);
+                connectedSurrounding.put(disisContainer.getName(), disisContainer);
+                System.out.println(configuration.getLocalName() + ": connected " + disisContainer.getName());
+            }
         }
 
-        if (!areAllServicesConnected()) {
-            waitForConnections();
-        }
-
+        sendReadyMessage();
+        waitForConnections();
         setReady(true);
     }
 
-    private void waitForConnections() {
+    private void waitForConnections() throws RemoteException {
+        for (DisisContainer disisContainer : connectedSurrounding.values()) {
+            IMessageInbox messageInbox = disisContainer.getInbox();
 
+            while (!messageInbox.getReceivedMessages().stream()
+                    .anyMatch(message -> message instanceof ReadyMessage)) {
+                System.out.println("cekam");
+                ThreadHelper.sleep(1000);
+            }
+
+        }
     }
 
-    private void startCommunicator() {
-        communicator.start(configuration);
+    private void startCommunicator() throws RemoteException {
+        localMessageBox = communicator.start(configuration);
+
+        // just for debugging
+        localMessageBox.getReceivedMessageListeners().add(new ConsoleListener(configuration.getLocalName()));
+        System.out.println(configuration.getLocalName() + ": local bind successful completed");
     }
 
     private boolean areAllServicesConnected() {
-        for (boolean connected : connectedSurrounding.values()) {
-            if (!connected) return false;
+        for (DisisContainer disisContainer : connectedSurrounding.values()) {
+            if (!disisContainer.isConnected()) return false;
         }
         return true;
     }
 
     private void setReady(boolean ready) {
         this.ready = ready;
+    }
+
+    private String getFullName() {
+        // TODO: need to getting local ip address instead of localhost
+        return String.format("localhost:%d/%s", configuration.getLocalPort(), configuration.getLocalName());
     }
 }

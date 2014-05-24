@@ -1,0 +1,13 @@
+{
+    "local-name": "disis2",
+    "local-port": "1089",
+
+    "surrounding-services": [
+        {
+            "title": "DISIS 1",
+            "remote-name": "disis1",
+            "network-address": "localhost",
+            "port": "1099"
+        }
+    ]
+}

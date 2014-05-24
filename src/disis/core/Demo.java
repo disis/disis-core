@@ -2,8 +2,13 @@ package disis.core;
 
 import disis.core.configuration.ConfigurationLoader;
 import disis.core.configuration.LocalConfiguration;
+import disis.core.rmi.RmiInboxFactory;
+import disis.core.utils.ThreadHelper;
 
+import javax.swing.*;
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * This is DISIS
@@ -13,12 +18,46 @@ import java.io.File;
 public class Demo {
 
     public static void main(String[] args) {
-        String configurationPath = new File("src/disis/sample/demo1/configuration-sample.json").getAbsolutePath();
+        // demo1();
+        demo2();
+    }
+
+
+    private static void demo1() {
+        String configurationPath = new File("src/disis/sample/demo1/local-configuration-sample.json").getAbsolutePath();
         LocalConfiguration localConfiguration = ConfigurationLoader.load(configurationPath);
 
         DisisCommunicator communicator = new DisisCommunicator();
-        DisisService service = new DisisService(communicator, localConfiguration);
+        DisisService service = new DisisService(communicator, localConfiguration, new RmiInboxFactory());
 
         service.start();
+    }
+
+    private static void demo2() {
+        String configurationPath1 = new File("src/disis/sample/demo2/local-configuration-sample-1.json").getAbsolutePath();
+        String configurationPath2 = new File("src/disis/sample/demo2/local-configuration-sample-2.json").getAbsolutePath();
+
+        LocalConfiguration localConfiguration1 = ConfigurationLoader.load(configurationPath1);
+        LocalConfiguration localConfiguration2 = ConfigurationLoader.load(configurationPath2);
+
+        List<LocalConfiguration> configurations = Arrays.asList(localConfiguration1, localConfiguration2);
+
+        for (final LocalConfiguration configuration : configurations) {
+            Thread disisThread = new Thread(() -> {
+                DisisCommunicator communicator = new DisisCommunicator();
+                IMessageInboxFactory inboxFactory = new RmiInboxFactory();
+
+                DisisService service = new DisisService(communicator, configuration, inboxFactory);
+                service.start();
+
+                System.out.println(String.format("%s {localhost:%d} started", configuration.getLocalName(), configuration.getLocalPort()));
+            });
+            disisThread.start();
+            ThreadHelper.sleep(3000);
+        }
+
+        SwingUtilities.invokeLater(() -> {
+            System.out.println("\nTHIS IS DISIS!!!\n");
+        });
     }
 }
