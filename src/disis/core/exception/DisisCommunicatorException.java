@@ -21,4 +21,8 @@ public class DisisCommunicatorException extends RemoteException {
     public DisisCommunicatorException(RemoteException exception) {
         super(exception.getMessage());
     }
+
+    public DisisCommunicatorException(String message) {
+        super(message);
+    }
 }

@@ -18,5 +18,5 @@ public interface IMessageInbox extends Remote {
 
     List<IMessage> getReceivedMessages() throws RemoteException;
 
-    List<ReceivedMessageListener> getReceivedMessageListeners() throws RemoteException;
+    void addReceivedMessageListener(ReceivedMessageListener receivedMessageListener) throws RemoteException;
 }

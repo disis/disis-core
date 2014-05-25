@@ -27,8 +27,9 @@ public class Demo {
         String configurationPath = new File("src/disis/sample/demo1/local-configuration-sample.json").getAbsolutePath();
         LocalConfiguration localConfiguration = ConfigurationLoader.load(configurationPath);
 
-        DisisCommunicator communicator = new DisisCommunicator();
-        DisisService service = new DisisService(communicator, localConfiguration, new RmiInboxFactory());
+        IMessageInboxFactory inboxFactory = new RmiInboxFactory();
+        DisisCommunicator communicator = new DisisCommunicator(inboxFactory);
+        DisisService service = new DisisService(communicator, localConfiguration);
 
         service.start();
     }
@@ -44,10 +45,10 @@ public class Demo {
 
         for (final LocalConfiguration configuration : configurations) {
             Thread disisThread = new Thread(() -> {
-                DisisCommunicator communicator = new DisisCommunicator();
                 IMessageInboxFactory inboxFactory = new RmiInboxFactory();
+                DisisCommunicator communicator = new DisisCommunicator(inboxFactory);
 
-                DisisService service = new DisisService(communicator, configuration, inboxFactory);
+                DisisService service = new DisisService(communicator, configuration);
                 service.start();
 
                 System.out.println(String.format("%s {localhost:%d} started", configuration.getLocalName(), configuration.getLocalPort()));

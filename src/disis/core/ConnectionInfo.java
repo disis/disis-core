@@ -7,14 +7,14 @@ import disis.core.configuration.DisisConfiguration;
  * Authors: Jirka Penzes & Jan Voracek
  * Date: 24/05/14 12:05
  */
-public class DisisContainer {
+public class ConnectionInfo {
 
     private final String name;
     private final IMessageInbox inbox;
     private final DisisConfiguration configuration;
     private boolean connected;
 
-    public DisisContainer(DisisConfiguration configuration, IMessageInbox messageInbox, boolean connected) {
+    public ConnectionInfo(DisisConfiguration configuration, IMessageInbox messageInbox, boolean connected) {
         this.name = configuration.getRemoteName();
         this.connected = connected;
         this.inbox = messageInbox;

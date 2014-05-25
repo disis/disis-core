@@ -23,17 +23,15 @@ public class DisisService {
 
     private DisisCommunicator communicator;
     private LocalConfiguration configuration;
-    private IMessageInboxFactory messageInboxFactory;
     private IMessageInbox localMessageBox;
-    private Map<String, DisisContainer> connectedSurrounding = new HashMap<>();
+    private Map<String, ConnectionInfo> connectedSurrounding = new HashMap<>();
     private boolean ready = false;
 
     private static final Object locker = new Object();
 
-    public DisisService(DisisCommunicator communicator, LocalConfiguration configuration, IMessageInboxFactory messageInboxFactory) {
+    public DisisService(DisisCommunicator communicator, LocalConfiguration configuration) {
         this.communicator = communicator;
         this.configuration = configuration;
-        this.messageInboxFactory = messageInboxFactory;
     }
 
     public void start() {
@@ -69,18 +67,18 @@ public class DisisService {
     }
 
     private void sendInternalBroadcastMessage(IMessage message) throws DisisCommunicatorException {
-        for (DisisContainer disisContainer : connectedSurrounding.values()) {
-            System.out.println(configuration.getLocalName() + ": sending message to " + disisContainer.getName() + " (" + message.getMessage() + ")");
-            communicator.sendMessage(message, disisContainer.getInbox());
+        for (ConnectionInfo connectionInfo : connectedSurrounding.values()) {
+            System.out.println(configuration.getLocalName() + ": sending message to " + connectionInfo.getName() + " (" + message.getMessage() + ")");
+            communicator.sendMessage(message, connectionInfo.getInbox());
         }
     }
 
     private void connectToSurroundingServices() throws RemoteException {
         for (DisisConfiguration disisConfiguration : configuration.getSurroundingServices()) {
             synchronized (locker) {
-                DisisContainer disisContainer = communicator.connect(disisConfiguration);
-                connectedSurrounding.put(disisContainer.getName(), disisContainer);
-                System.out.println(configuration.getLocalName() + ": connected " + disisContainer.getName());
+                ConnectionInfo connectionInfo = communicator.connect(disisConfiguration);
+                connectedSurrounding.put(connectionInfo.getName(), connectionInfo);
+                System.out.println(configuration.getLocalName() + ": connected to " + connectionInfo.getName());
             }
         }
 
@@ -90,12 +88,12 @@ public class DisisService {
     }
 
     private void waitForConnections() throws RemoteException {
-        for (DisisContainer disisContainer : connectedSurrounding.values()) {
-            IMessageInbox messageInbox = disisContainer.getInbox();
+        for (ConnectionInfo connectionInfo : connectedSurrounding.values()) {
+            IMessageInbox messageInbox = connectionInfo.getInbox();
 
             while (!messageInbox.getReceivedMessages().stream()
                     .anyMatch(message -> message instanceof ReadyMessage)) {
-                System.out.println("cekam");
+                System.out.println("Waiting for ReadyMessage");
                 ThreadHelper.sleep(1000);
             }
 
@@ -106,15 +104,12 @@ public class DisisService {
         localMessageBox = communicator.start(configuration);
 
         // just for debugging
-        localMessageBox.getReceivedMessageListeners().add(new ConsoleListener(configuration.getLocalName()));
-        System.out.println(configuration.getLocalName() + ": local bind successful completed");
+        localMessageBox.addReceivedMessageListener(new ConsoleListener(configuration.getLocalName()));
+        System.out.println(configuration.getLocalName() + ": local bind successfully completed");
     }
 
     private boolean areAllServicesConnected() {
-        for (DisisContainer disisContainer : connectedSurrounding.values()) {
-            if (!disisContainer.isConnected()) return false;
-        }
-        return true;
+        return connectedSurrounding.values().stream().allMatch(ConnectionInfo::isConnected);
     }
 
     private void setReady(boolean ready) {

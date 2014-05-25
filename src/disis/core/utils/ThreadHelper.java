@@ -8,10 +8,13 @@ package disis.core.utils;
 public final class ThreadHelper {
 
     public static void sleep(long millis) {
+        long sleepStartedAt = System.currentTimeMillis();
         try {
             Thread.sleep(millis);
         } catch (InterruptedException exception) {
-            sleep(millis);
+            long sleepInterruptedAt = System.currentTimeMillis();
+            long remainingSleepTime = millis - (sleepInterruptedAt - sleepStartedAt);
+            sleep(remainingSleepTime);
         }
     }
 }

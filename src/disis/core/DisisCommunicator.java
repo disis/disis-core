@@ -4,7 +4,6 @@ import disis.core.configuration.DisisConfiguration;
 import disis.core.configuration.LocalConfiguration;
 import disis.core.exception.DisisCommunicatorException;
 import disis.core.net.IMessage;
-import disis.core.rmi.RmiMessageInbox;
 import disis.core.utils.ThreadHelper;
 
 import java.rmi.NotBoundException;
@@ -20,8 +19,13 @@ import java.rmi.registry.Registry;
  */
 public class DisisCommunicator {
 
-    private final int MaxNumberOfRepetitions = 10;
-    private final long RepetitionsSleepTime = 1000;
+    private final int maxNumberOfRetries = 10;
+    private final long retryDelay = 1000;
+    private final IMessageInboxFactory inboxFactory;
+
+    public DisisCommunicator(IMessageInboxFactory inboxFactory) {
+        this.inboxFactory = inboxFactory;
+    }
 
     public IMessageInbox start(LocalConfiguration localConfiguration) throws DisisCommunicatorException {
         try {
@@ -36,7 +40,7 @@ public class DisisCommunicator {
     }
 
     private IMessageInbox createMessageInbox() throws RemoteException {
-        return new RmiMessageInbox();
+        return inboxFactory.createInbox();
     }
 
     private void registerLocalRmiObject(Registry registry, String name, Remote object) throws RemoteException {
@@ -60,17 +64,18 @@ public class DisisCommunicator {
         }
     }
 
-    public DisisContainer connect(DisisConfiguration disisConfiguration) throws DisisCommunicatorException {
-        for (int repetition = 0; repetition < MaxNumberOfRepetitions; repetition++) {
+    public ConnectionInfo connect(DisisConfiguration disisConfiguration) throws DisisCommunicatorException {
+        for (int attemptNumber = 0; attemptNumber < maxNumberOfRetries; attemptNumber++) {
             try {
                 Registry registry = getRemoteRmiRegistry(disisConfiguration.getNetworkAddress(), disisConfiguration.getPort());
                 IMessageInbox remoteMessageInbox = (IMessageInbox) registry.lookup(disisConfiguration.getRemoteName());
-                return new DisisContainer(disisConfiguration, remoteMessageInbox, true);
+                return new ConnectionInfo(disisConfiguration, remoteMessageInbox, true);
             } catch (NotBoundException | RemoteException exception) {
-                ThreadHelper.sleep(RepetitionsSleepTime);
+                ThreadHelper.sleep(retryDelay);
             }
         }
-        throw new DisisCommunicatorException();
+
+        throw new DisisCommunicatorException("Destination unreachable: " + disisConfiguration.getRemoteName());
     }
 
     private Registry getRemoteRmiRegistry(String networkAddress, int port) throws RemoteException {

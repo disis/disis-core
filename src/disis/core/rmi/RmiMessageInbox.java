@@ -40,7 +40,7 @@ public class RmiMessageInbox extends UnicastRemoteObject implements IMessageInbo
     }
 
     @Override
-    public List<ReceivedMessageListener> getReceivedMessageListeners() throws RemoteException {
-        return messageListeners;
+    public void addReceivedMessageListener(ReceivedMessageListener receivedMessageListener) throws RemoteException {
+        messageListeners.add(receivedMessageListener);
     }
 }

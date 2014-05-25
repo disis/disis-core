@@ -18,7 +18,7 @@ public class RmiInboxFactory implements IMessageInboxFactory {
         try {
             return new RmiMessageInbox();
         } catch (RemoteException exception) {
-            throw new DisisException();
+            throw new DisisException(exception);
         }
     }
 }
