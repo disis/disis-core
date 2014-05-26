@@ -17,7 +17,7 @@ import java.util.List;
  * Authors: Jirka Penzes & Jan Voracek
  * Date: 14/04/14 19:16
  */
-public class Demo {
+class Demo {
 
     public static void main(String[] args) {
         // demo1();

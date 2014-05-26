@@ -9,7 +9,7 @@ import disis.core.net.IMessage;
  */
 public class ConsoleListener implements ReceivedMessageListener {
 
-    private String owner;
+    private final String owner;
 
     public ConsoleListener(String owner) {
         this.owner = owner;

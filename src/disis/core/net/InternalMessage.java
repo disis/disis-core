@@ -9,14 +9,8 @@ import java.io.Serializable;
  */
 public class InternalMessage extends DisisMessage implements Serializable {
 
-    private String message;
-
     public InternalMessage(String senderFullName, String message) {
         super(senderFullName);
         this.message = message;
-    }
-
-    public String getMessage() {
-        return message;
     }
 }

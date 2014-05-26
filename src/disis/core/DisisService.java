@@ -21,10 +21,10 @@ import java.util.Map;
  */
 public class DisisService {
 
-    private DisisCommunicator communicator;
-    private LocalConfiguration configuration;
+    private final DisisCommunicator communicator;
+    private final LocalConfiguration configuration;
     private IMessageInbox localMessageBox;
-    private Map<String, ConnectionInfo> connectedSurrounding = new HashMap<>();
+    private final Map<String, ConnectionInfo> connectedSurrounding = new HashMap<>();
     private boolean ready = false;
 
     private static final Object locker = new Object();
@@ -39,7 +39,7 @@ public class DisisService {
         startPublicEnvironment();  // REST
     }
 
-    public void startLocalEnvironment() {
+    private void startLocalEnvironment() {
         try {
             startCommunicator();
             connectToSurroundingServices();
@@ -48,7 +48,7 @@ public class DisisService {
         }
     }
 
-    public void startPublicEnvironment() {
+    private void startPublicEnvironment() {
         // TODO start REST API
     }
 
@@ -106,10 +106,6 @@ public class DisisService {
         // just for debugging
         localMessageBox.addReceivedMessageListener(new ConsoleListener(configuration.getLocalName()));
         System.out.println(configuration.getLocalName() + ": local bind successfully completed");
-    }
-
-    private boolean areAllServicesConnected() {
-        return connectedSurrounding.values().stream().allMatch(ConnectionInfo::isConnected);
     }
 
     private void setReady(boolean ready) {
