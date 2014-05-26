@@ -19,8 +19,8 @@ import java.rmi.registry.Registry;
  */
 public class DisisCommunicator {
 
-    private final int maxNumberOfRetries = 10;
-    private final long retryDelay = 1000;
+    private final int MAX_NUMBER_OF_RETRIES = 10;
+    private final long REPEAT_SLEEP_TIME = 1000;
     private final IMessageInboxFactory inboxFactory;
 
     public DisisCommunicator(IMessageInboxFactory inboxFactory) {
@@ -65,13 +65,13 @@ public class DisisCommunicator {
     }
 
     public ConnectionInfo connect(DisisConfiguration disisConfiguration) throws DisisCommunicatorException {
-        for (int attemptNumber = 0; attemptNumber < maxNumberOfRetries; attemptNumber++) {
+        for (int attemptNumber = 0; attemptNumber < MAX_NUMBER_OF_RETRIES; attemptNumber++) {
             try {
                 Registry registry = getRemoteRmiRegistry(disisConfiguration.getNetworkAddress(), disisConfiguration.getPort());
                 IMessageInbox remoteMessageInbox = (IMessageInbox) registry.lookup(disisConfiguration.getRemoteName());
                 return new ConnectionInfo(disisConfiguration, remoteMessageInbox, true);
             } catch (NotBoundException | RemoteException exception) {
-                ThreadHelper.sleep(retryDelay);
+                ThreadHelper.sleep(REPEAT_SLEEP_TIME);
             }
         }
 
