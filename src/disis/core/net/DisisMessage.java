@@ -12,10 +12,10 @@ public class DisisMessage implements Serializable, IMessage {
     // please see sample in comments
 
     // disis1
-    private String senderName;
+    private final String senderName;
 
     // 192.168.1.1:1099/disis1
-    private String senderFullName;
+    private final String senderFullName;
 
     // disis2
     //private String recipientName;

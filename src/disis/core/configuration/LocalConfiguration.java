@@ -13,13 +13,13 @@ import java.util.List;
 public class LocalConfiguration {
 
     @SerializedName("local-name")
-    private String localName;
+    private final String localName;
 
     @SerializedName("local-port")
-    private int localPort;
+    private final int localPort;
 
     @SerializedName("surrounding-services")
-    private List<DisisConfiguration> surroundingServices;
+    private final List<DisisConfiguration> surroundingServices;
 
     public LocalConfiguration() {
         // default configuration
