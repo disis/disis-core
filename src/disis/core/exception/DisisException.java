@@ -1,7 +1,5 @@
 package disis.core.exception;
 
-import java.rmi.RemoteException;
-
 /**
  * This is DISIS
  * Authors: Jirka Penzes & Jan Voracek
@@ -13,7 +11,7 @@ public class DisisException extends RuntimeException {
         super("Argh!!! - You don't want this!");
     }
 
-    public DisisException(RemoteException exception) {
+    public DisisException(Exception exception) {
         super(exception);
     }
 }

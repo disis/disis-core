@@ -3,8 +3,10 @@ package disis.core.utils;
 import disis.core.DisisCommunicator;
 import disis.core.DisisService;
 import disis.core.IMessageInboxFactory;
+import disis.core.IMessageInboxRegistrar;
 import disis.core.configuration.LocalConfiguration;
 import disis.core.rmi.RmiInboxFactory;
+import disis.core.rmi.RmiRegistrar;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -23,7 +25,8 @@ public class DisisServiceRunner {
     public static void run(LocalConfiguration configuration) {
         Thread disisThread = new Thread(() -> {
             IMessageInboxFactory inboxFactory = new RmiInboxFactory();
-            DisisCommunicator communicator = new DisisCommunicator(inboxFactory);
+            IMessageInboxRegistrar inboxRegistrar = new RmiRegistrar();
+            DisisCommunicator communicator = new DisisCommunicator(inboxFactory, inboxRegistrar);
 
             DisisService service = new DisisService(communicator, configuration);
             service.start();

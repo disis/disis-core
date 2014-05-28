@@ -8,6 +8,6 @@ package disis.core.utils;
 public final class TextFacility {
 
     public final class Exception {
-        public static final String LOCAL_CONFIGURATION_LOADING_ERROR = "";
+        public static final String LOCAL_CONFIGURATION_LOADING_ERROR = "Configuration file not found";
     }
 }
