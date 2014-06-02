@@ -3,6 +3,7 @@ package disis.core;
 import disis.core.configuration.ConfigurationLoader;
 import disis.core.configuration.LocalConfiguration;
 import disis.core.rmi.RmiInboxFactory;
+import disis.core.rmi.RmiRegistrar;
 import disis.core.utils.DisisServiceRunner;
 import disis.core.utils.ThreadHelper;
 
@@ -30,7 +31,8 @@ class Demo {
         LocalConfiguration localConfiguration = ConfigurationLoader.load(configurationPath);
 
         IMessageInboxFactory inboxFactory = new RmiInboxFactory();
-        DisisCommunicator communicator = new DisisCommunicator(inboxFactory);
+        IMessageInboxRegistrar inboxRegistrar = new RmiRegistrar();
+        DisisCommunicator communicator = new DisisCommunicator(inboxFactory, inboxRegistrar);
         DisisService service = new DisisService(communicator, localConfiguration);
 
         service.start();
