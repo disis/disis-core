@@ -1,15 +1,22 @@
 package disis.core;
 
+import com.sun.jersey.api.container.grizzly2.GrizzlyServerFactory;
+import com.sun.jersey.api.core.ClassNamesResourceConfig;
+import com.sun.jersey.api.core.ClasspathResourceConfig;
+import com.sun.jersey.api.core.ResourceConfig;
 import disis.core.configuration.ConfigurationLoader;
 import disis.core.configuration.LocalConfiguration;
+import disis.core.rest.GrizzlyServer;
 import disis.core.rmi.RmiInboxFactory;
 import disis.core.rmi.RmiRegistrar;
 import disis.core.utils.DisisServiceRunner;
 import disis.core.utils.ThreadHelper;
+import org.glassfish.grizzly.http.server.HttpServer;
 
 import javax.swing.SwingUtilities;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,11 +27,11 @@ import java.util.List;
  */
 class Demo {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // demo1();
-        demo2();
+        //demo2();
+        demo3();
     }
-
 
     private static void demo1() {
         String configurationPath = new File("src/disis/sample/demo1/local-configuration-sample.json").getAbsolutePath();
@@ -64,5 +71,13 @@ class Demo {
             System.exit(0);
         }
     }
-}
 
+    private static void demo3() throws IOException {
+        // Useful for testing REST API - https://code.google.com/p/rest-client/
+
+        GrizzlyServer server = new GrizzlyServer(DisisRestResource.class);
+        server.start(8099);
+        System.in.read();
+        server.stop();
+    }
+}
