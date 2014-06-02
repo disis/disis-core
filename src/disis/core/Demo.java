@@ -39,11 +39,13 @@ class Demo {
     private static void demo2() {
         String configurationPath1 = new File("src/disis/sample/demo2/local-configuration-sample-1.json").getAbsolutePath();
         String configurationPath2 = new File("src/disis/sample/demo2/local-configuration-sample-2.json").getAbsolutePath();
+        String configurationPath3 = new File("src/disis/sample/demo2/local-configuration-sample-3.json").getAbsolutePath();
 
         LocalConfiguration localConfiguration1 = ConfigurationLoader.load(configurationPath1);
         LocalConfiguration localConfiguration2 = ConfigurationLoader.load(configurationPath2);
+        LocalConfiguration localConfiguration3 = ConfigurationLoader.load(configurationPath3);
 
-        List<LocalConfiguration> configurations = Arrays.asList(localConfiguration1, localConfiguration2);
+        List<LocalConfiguration> configurations = Arrays.asList(localConfiguration1, localConfiguration2, localConfiguration3);
 
         for (final LocalConfiguration configuration : configurations) {
             DisisServiceRunner.run(configuration);

@@ -8,6 +8,12 @@
             "remote-name": "disis1",
             "network-address": "localhost",
             "port": "1099"
+        },
+        {
+            "title": "DISIS 3",
+            "remote-name": "disis3",
+            "network-address": "localhost",
+            "port": "1079"
         }
     ]
 }

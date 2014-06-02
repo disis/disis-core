@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="com.sun.grizzly:grizzly-servlet-webserver:2.0.0-M3" type="repository">
+    <properties maven-id="com.sun.grizzly:grizzly-servlet-webserver:2.0.0-M3" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/grizzly-servlet-webserver-2.0.0-M3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grizzly-http-servlet-2.0.0-M3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/servlet-api-2.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grizzly-http-2.0.0-M3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grizzly-http-util-2.0.0-M3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grizzly-framework-2.0.0-M3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grizzly-rcm-2.0.0-M3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

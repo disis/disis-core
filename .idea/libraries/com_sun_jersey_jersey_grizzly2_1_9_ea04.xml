@@ -1,0 +1,22 @@
+<component name="libraryTable">
+  <library name="com.sun.jersey:jersey-grizzly2:1.9-ea04" type="repository">
+    <properties maven-id="com.sun.jersey:jersey-grizzly2:1.9-ea04" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/jersey-grizzly2-1.9-ea04.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grizzly-http-2.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grizzly-framework-2.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gmbal-api-only-3.0.0-b023.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/management-api-3.0.0-b012.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grizzly-http-server-2.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grizzly-rcm-2.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grizzly-http-servlet-2.1.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/grizzly-framework-2.1.1-tests.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javax.servlet-3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jersey-server-1.9-ea04.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/asm-3.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jersey-core-1.9-ea04.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
