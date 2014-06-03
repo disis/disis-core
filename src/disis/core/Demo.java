@@ -1,22 +1,17 @@
 package disis.core;
 
-import com.sun.jersey.api.container.grizzly2.GrizzlyServerFactory;
-import com.sun.jersey.api.core.ClassNamesResourceConfig;
-import com.sun.jersey.api.core.ClasspathResourceConfig;
-import com.sun.jersey.api.core.ResourceConfig;
 import disis.core.configuration.ConfigurationLoader;
 import disis.core.configuration.LocalConfiguration;
+import disis.core.rest.DisisRestResource;
 import disis.core.rest.GrizzlyServer;
 import disis.core.rmi.RmiInboxFactory;
 import disis.core.rmi.RmiRegistrar;
 import disis.core.utils.DisisServiceRunner;
 import disis.core.utils.ThreadHelper;
-import org.glassfish.grizzly.http.server.HttpServer;
 
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 
@@ -40,7 +35,7 @@ class Demo {
         IMessageInboxFactory inboxFactory = new RmiInboxFactory();
         IMessageInboxRegistrar inboxRegistrar = new RmiRegistrar();
         DisisCommunicator communicator = new DisisCommunicator(inboxFactory, inboxRegistrar);
-        DisisService service = new DisisService(communicator, localConfiguration);
+        DisisService service = new DisisService(communicator, null, localConfiguration);
 
         service.start();
     }

@@ -1,10 +1,10 @@
 package disis.core.utils;
 
-import disis.core.DisisCommunicator;
-import disis.core.DisisService;
-import disis.core.IMessageInboxFactory;
-import disis.core.IMessageInboxRegistrar;
+import disis.core.*;
 import disis.core.configuration.LocalConfiguration;
+import disis.core.rest.DisisRestResource;
+import disis.core.rest.IRestServer;
+import disis.core.rest.RestServer;
 import disis.core.rmi.RmiInboxFactory;
 import disis.core.rmi.RmiRegistrar;
 
@@ -27,8 +27,9 @@ public class DisisServiceRunner {
             IMessageInboxFactory inboxFactory = new RmiInboxFactory();
             IMessageInboxRegistrar inboxRegistrar = new RmiRegistrar();
             DisisCommunicator communicator = new DisisCommunicator(inboxFactory, inboxRegistrar);
+            IRestServer restServer = new RestServer("http://localhost", 8099, DisisRestResource.class);
 
-            DisisService service = new DisisService(communicator, configuration);
+            DisisService service = new DisisService(communicator, restServer, configuration);
             service.start();
 
             System.out.println(String.format("%s {localhost:%d} started", configuration.getLocalName(), configuration.getLocalPort()));

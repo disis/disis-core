@@ -8,6 +8,9 @@ import disis.core.net.IMessage;
 import disis.core.net.MessageBuilder;
 import disis.core.net.ReadyMessage;
 import disis.core.net.listeners.ConsoleListener;
+import disis.core.rest.IRestServer;
+import disis.core.rest.content.RestClientInfo;
+import disis.core.rest.content.RestInternalMessage;
 import disis.core.utils.ThreadHelper;
 
 import java.rmi.RemoteException;
@@ -22,21 +25,29 @@ import java.util.Map;
 public class DisisService {
 
     private final DisisCommunicator communicator;
+    private final IRestServer restServer;
     private final LocalConfiguration configuration;
-    private IMessageInbox localMessageBox;
     private final Map<String, ConnectionInfo> connectedSurrounding = new HashMap<>();
+    private IMessageInbox localMessageBox;
     private boolean ready = false;
 
     private static final Object locker = new Object();
+    private HashMap<String, RestClientInfo> localClients = new HashMap<>();
 
-    public DisisService(DisisCommunicator communicator, LocalConfiguration configuration) {
+    public DisisService(DisisCommunicator communicator, IRestServer restServer, LocalConfiguration configuration) {
         this.communicator = communicator;
+        this.restServer = restServer;
         this.configuration = configuration;
     }
 
     public void start() {
+        initializeContext();
         startLocalEnvironment(); // RMI
         startPublicEnvironment();  // REST
+    }
+
+    private void initializeContext() {
+        StaticContext.init(this);
     }
 
     private void startLocalEnvironment() {
@@ -49,7 +60,7 @@ public class DisisService {
     }
 
     private void startPublicEnvironment() {
-        // TODO start REST API
+        restServer.start();
     }
 
     private void sendReadyMessage() throws DisisCommunicatorException {
@@ -115,5 +126,53 @@ public class DisisService {
     private String getFullName() {
         // TODO: need to getting local ip address instead of localhost
         return String.format("localhost:%d/%s", configuration.getLocalPort(), configuration.getLocalName());
+    }
+
+    public HashMap<String, RestClientInfo> getLocalClients() {
+        return localClients;
+    }
+
+    public void sendInternalMessage(RestInternalMessage restInternalMessage) throws DisisCommunicatorException {
+        // Potrebujeme predat zpravu z jednoho simulatoru na druhy - simulator poslal pozadavek:
+        // fast-food-ii -> highway
+        // interne si zatim ukladame pouze disis jmena, je potreba zjistit ke ktere disis simulator patri
+        //
+        // napadaji me ted dve reseni:
+        //
+
+
+        /*
+        // prvni pres RMI objekt
+
+        IMessageInbox toInbox = null;
+        for (ConnectionInfo connectionInfo : connectedSurrounding.values()) {
+            IMessageInbox messageInbox = connectionInfo.getInbox();
+
+            List<Client> registeredClients = messageInbox.getRegisteredClients();
+            if (registeredClients.contains(restInternalMessage.getTo())) {
+                toInbox = messageInbox;
+            }
+        }
+
+        // nejedna se o sousedni disis -> poslu broadcast na vsechny a hledam, kde je simulator pripojen
+        if (toInbox == null) {
+            IMessage message = new InternalMessage(getFullName(), "search-client:" + restInternalMessage.getTo());
+            sendInternalBroadcastMessage(message);
+
+            registerMessageToListener(restInternalMessage);
+            // -> je potreba pridat pro message box nejaky listener, ktery bude cekat na odpoved od disis, ktera ze simulatorem komunikuje -> a odesle zpravu
+            // a pripadne klienta ulozi nekam do cache (cache by se prochaze pred sousednima disis)
+        }
+
+
+        // 2 cesta
+        // neukladam seznam klientu v RMI, tj. hned odeslu broadcast message
+        IMessage message = new InternalMessage(getFullName(), "search-client:" + restInternalMessage.getTo());
+        sendInternalBroadcastMessage(message);
+        registerMessageToListener(restInternalMessage);
+
+        // zase by bylo vhodne ukladat odpovedi nekam do cache, aby se nemusel porad posilat broadcast
+
+        */
     }
 }

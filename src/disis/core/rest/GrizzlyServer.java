@@ -3,7 +3,6 @@ package disis.core.rest;
 import com.sun.jersey.api.container.grizzly2.GrizzlyServerFactory;
 import com.sun.jersey.api.core.ClassNamesResourceConfig;
 import com.sun.jersey.api.core.ResourceConfig;
-import disis.core.DisisRestResource;
 import org.glassfish.grizzly.http.server.HttpServer;
 
 import java.io.IOException;
