@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Authors: Jirka Penzes & Jan Voracek
  * Date: 04/06/14 00:32
  */
-public class RestInternalMessage {
+public class RestMessage {
 
     // Non-simulation message (for diagnostic, statistics, ...)
 

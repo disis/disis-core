@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import disis.core.DisisService;
 import disis.core.StaticContext;
 import disis.core.rest.content.RestClientInfo;
-import disis.core.rest.content.RestInternalMessage;
+import disis.core.rest.content.RestMessage;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -37,8 +37,14 @@ public class DisisRestResource {
     @POST
     @Path("send-internal-message")
     @Consumes(MediaType.APPLICATION_JSON)
-    public void sendInternalMessage(String internalMessage) {
-        RestInternalMessage restInternalMessage = new Gson().fromJson(internalMessage, RestInternalMessage.class);
-        // service.sendMessage(restInternalMessage);
+    public void sendMessage(String rawMessage) {
+        RestMessage restMessage = new Gson().fromJson(rawMessage, RestMessage.class);
+        // service.sendMessage(restMessage);
+    }
+
+    @POST
+    @Path("test")
+    public String test() {
+        return "hello";
     }
 }

@@ -1,0 +1,7 @@
+{
+    "local-name": "disis1",
+    "local-port": "1099",
+
+    "surrounding-services": [
+    ]
+}

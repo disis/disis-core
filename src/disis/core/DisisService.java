@@ -10,7 +10,7 @@ import disis.core.net.ReadyMessage;
 import disis.core.net.listeners.ConsoleListener;
 import disis.core.rest.IRestServer;
 import disis.core.rest.content.RestClientInfo;
-import disis.core.rest.content.RestInternalMessage;
+import disis.core.rest.content.RestMessage;
 import disis.core.utils.ThreadHelper;
 
 import java.rmi.RemoteException;
@@ -132,7 +132,7 @@ public class DisisService {
         return localClients;
     }
 
-    public void sendInternalMessage(RestInternalMessage restInternalMessage) throws DisisCommunicatorException {
+    public void sendSimulatorMessage(RestMessage restMessage) throws DisisCommunicatorException {
         // Potrebujeme predat zpravu z jednoho simulatoru na druhy - simulator poslal pozadavek:
         // fast-food-ii -> highway
         // interne si zatim ukladame pouze disis jmena, je potreba zjistit ke ktere disis simulator patri

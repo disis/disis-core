@@ -3,7 +3,8 @@ package disis.core;
 import disis.core.configuration.ConfigurationLoader;
 import disis.core.configuration.LocalConfiguration;
 import disis.core.rest.DisisRestResource;
-import disis.core.rest.GrizzlyServer;
+import disis.core.rest.IRestServer;
+import disis.core.rest.RestServer;
 import disis.core.rmi.RmiInboxFactory;
 import disis.core.rmi.RmiRegistrar;
 import disis.core.utils.DisisServiceRunner;
@@ -23,20 +24,20 @@ import java.util.List;
 class Demo {
 
     public static void main(String[] args) throws IOException {
-        // demo1();
+        //demo1();
         //demo2();
         demo3();
     }
 
     private static void demo1() {
-        String configurationPath = new File("src/disis/sample/demo1/local-configuration-sample.json").getAbsolutePath();
+        String configurationPath = new File("src/disis/sample/demo1/configuration-sample.json").getAbsolutePath();
         LocalConfiguration localConfiguration = ConfigurationLoader.load(configurationPath);
 
         IMessageInboxFactory inboxFactory = new RmiInboxFactory();
         IMessageInboxRegistrar inboxRegistrar = new RmiRegistrar();
         DisisCommunicator communicator = new DisisCommunicator(inboxFactory, inboxRegistrar);
-        DisisService service = new DisisService(communicator, null, localConfiguration);
-
+        IRestServer restServer = new RestServer("http://localhost", localConfiguration.getLocalPort(), DisisRestResource.class);
+        DisisService service = new DisisService(communicator, restServer, localConfiguration);
         service.start();
     }
 
@@ -68,11 +69,14 @@ class Demo {
     }
 
     private static void demo3() throws IOException {
-        // Useful for testing REST API - https://code.google.com/p/rest-client/
+        String configurationPath = new File("src/disis/sample/demo3/configuration-sample.json").getAbsolutePath();
+        LocalConfiguration localConfiguration = ConfigurationLoader.load(configurationPath);
 
-        GrizzlyServer server = new GrizzlyServer(DisisRestResource.class);
-        server.start(8099);
-        System.in.read();
-        server.stop();
+        IMessageInboxFactory inboxFactory = new RmiInboxFactory();
+        IMessageInboxRegistrar inboxRegistrar = new RmiRegistrar();
+        DisisCommunicator communicator = new DisisCommunicator(inboxFactory, inboxRegistrar);
+        IRestServer restServer = new RestServer("http://localhost", 8099, DisisRestResource.class);
+        DisisService service = new DisisService(communicator, restServer, localConfiguration);
+        service.start();
     }
 }
