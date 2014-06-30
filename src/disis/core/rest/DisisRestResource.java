@@ -1,6 +1,8 @@
 package disis.core.rest;
 
 import com.google.gson.Gson;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
 import disis.core.DisisService;
 import disis.core.StaticContext;
 import disis.core.rest.content.RestClientInfo;
@@ -32,6 +34,10 @@ public class DisisRestResource {
     public void connect(String rawClientInfo) {
         RestClientInfo clientInfo = new Gson().fromJson(rawClientInfo, RestClientInfo.class);
         service.getLocalClients().put(clientInfo.getRemoteName(), clientInfo);
+
+        Client client = Client.create();
+        WebResource resource = client.resource(clientInfo.getEndPointAddress()).path("connected");
+        resource.post();
     }
 
     @POST
