@@ -7,6 +7,7 @@ import disis.core.exception.DisisException;
 import disis.core.net.IMessage;
 import disis.core.net.MessageBuilder;
 import disis.core.net.ReadyMessage;
+import disis.core.net.SimulatorRequiredMessage;
 import disis.core.net.listeners.ConsoleListener;
 import disis.core.rest.IRestServer;
 import disis.core.rest.content.RestClientInfo;
@@ -32,7 +33,8 @@ public class DisisService {
     private boolean ready = false;
 
     private static final Object locker = new Object();
-    private HashMap<String, RestClientInfo> localClients = new HashMap<>();
+    private Map<String, RestClientInfo> localSimulators = new HashMap<>();
+    private Map<String, RemoteSimulatorInfo> remoteSimulators = new HashMap<>();
 
     public DisisService(DisisCommunicator communicator, IRestServer restServer, LocalConfiguration configuration) {
         this.communicator = communicator;
@@ -128,8 +130,22 @@ public class DisisService {
         return String.format("localhost:%d/%s", configuration.getLocalPort(), configuration.getLocalName());
     }
 
-    public HashMap<String, RestClientInfo> getLocalClients() {
-        return localClients;
+    public void connectSimulator(RestClientInfo clientInfo) {
+        localSimulators.put(clientInfo.getRemoteName(), clientInfo);
+        for(String simulatorName : clientInfo.getSurroundingSimulators()) {
+            if(!localSimulators.containsKey(simulatorName)) {
+                remoteSimulators.put(simulatorName, new RemoteSimulatorInfo());
+                sendSimulatorRequestMessage(simulatorName); // todo: handle this message and response (maybe response later)
+            }
+        }
+    }
+
+    private void sendSimulatorRequestMessage(String simulatorName) {
+        try {
+            sendInternalBroadcastMessage(new SimulatorRequiredMessage(getFullName(), simulatorName));
+        } catch (DisisCommunicatorException e) {
+            e.printStackTrace(); // todo: handle this
+        }
     }
 
     public void sendSimulatorMessage(RestMessage restMessage) throws DisisCommunicatorException {

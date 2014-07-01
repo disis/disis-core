@@ -24,6 +24,7 @@
     <orderEntry type="library" name="com.sun.jersey:jersey-server:1.17.1" level="project" />
     <orderEntry type="library" name="com.sun.grizzly:grizzly-servlet-webserver:2.0.0-M3" level="project" />
     <orderEntry type="library" name="com.sun.jersey:jersey-client:1.17.1" level="project" />
+    <orderEntry type="library" name="com.google.guava:guava:15.0" level="project" />
   </component>
 </module>
 

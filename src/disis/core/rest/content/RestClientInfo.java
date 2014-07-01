@@ -25,6 +25,10 @@ public class RestClientInfo {
     @SerializedName("end-point-address")
     public String endPointAddress;
 
+    // ["fast-food-I", "highway-I"]
+    @SerializedName("surrounding-simulators")
+    public Iterable<String> surroundingSimulators;
+
     public String getTitle() {
         return title;
     }
@@ -39,5 +43,9 @@ public class RestClientInfo {
 
     public String getEndPointAddress() {
         return endPointAddress;
+    }
+
+    public Iterable<String> getSurroundingSimulators() {
+        return surroundingSimulators;
     }
 }
