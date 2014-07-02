@@ -7,7 +7,6 @@ import disis.core.exception.DisisException;
 import disis.core.net.IMessage;
 import disis.core.utils.ThreadHelper;
 
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 /**
@@ -42,7 +41,7 @@ public class DisisCommunicator {
         for (int attemptNumber = 0; attemptNumber < MAX_NUMBER_OF_RETRIES; attemptNumber++) {
             try {
                 IMessageInbox remoteMessageInbox = inboxRegistrar.getRemoteInbox(disisConfiguration);
-                return new ConnectionInfo(disisConfiguration, remoteMessageInbox, true);
+                return new ConnectionInfo(disisConfiguration, remoteMessageInbox);
             } catch (DisisException exception) {
                 ThreadHelper.sleep(REPEAT_SLEEP_TIME);
             }

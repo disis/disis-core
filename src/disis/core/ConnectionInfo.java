@@ -12,14 +12,12 @@ public class ConnectionInfo {
     private final String name;
     private final IMessageInbox inbox;
     private final DisisConfiguration configuration;
-    private boolean connected;
+    private boolean ready;
 
-    public ConnectionInfo(DisisConfiguration configuration, IMessageInbox messageInbox, boolean connected) {
+    public ConnectionInfo(DisisConfiguration configuration, IMessageInbox messageInbox) {
         this.name = configuration.getRemoteName();
-        this.connected = connected;
         this.inbox = messageInbox;
         this.configuration = configuration;
-
     }
 
     public String getName() {
@@ -30,8 +28,8 @@ public class ConnectionInfo {
         return String.format("%s:%d/%s", configuration.getNetworkAddress(), configuration.getPort(), configuration.getRemoteName());
     }
 
-    public boolean isConnected() {
-        return connected;
+    public boolean isReady() {
+        return ready;
     }
 
     public IMessageInbox getInbox() {
@@ -42,8 +40,8 @@ public class ConnectionInfo {
         return configuration;
     }
 
-    public void setConnected(boolean connected) {
-        this.connected = connected;
+    public void setReady(boolean ready) {
+        this.ready = ready;
     }
 }
 

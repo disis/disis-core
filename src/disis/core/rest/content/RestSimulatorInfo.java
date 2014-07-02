@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Authors: Jirka Penzes & Jan Voracek
  * Date: 04/06/14 00:21
  */
-public class RestClientInfo {
+public class RestSimulatorInfo {
 
     // Fast Food Left
     @SerializedName("title")

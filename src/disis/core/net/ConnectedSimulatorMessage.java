@@ -5,11 +5,11 @@ package disis.core.net;
  * Authors: Jirka Penzes & Jan Voracek
  * Date: 30. 6. 2014 23:11
  */
-public class SimulatorRequiredMessage extends DisisMessage {
+public class ConnectedSimulatorMessage extends DisisMessage {
 
     private final String simulatorName;
 
-    public SimulatorRequiredMessage(String senderFullName, String simulatorName) {
+    public ConnectedSimulatorMessage(String senderFullName, String simulatorName) {
         super(senderFullName);
         this.simulatorName = simulatorName;
     }

@@ -5,7 +5,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import disis.core.DisisService;
 import disis.core.StaticContext;
-import disis.core.rest.content.RestClientInfo;
+import disis.core.rest.content.RestSimulatorInfo;
 import disis.core.rest.content.RestMessage;
 
 import javax.ws.rs.Consumes;
@@ -32,8 +32,8 @@ public class DisisRestResource {
     @Path("connect")
     @Consumes(MediaType.APPLICATION_JSON)
     public void connect(String rawClientInfo) {
-        RestClientInfo clientInfo = new Gson().fromJson(rawClientInfo, RestClientInfo.class);
-        service.getLocalClients().put(clientInfo.getRemoteName(), clientInfo);
+        RestSimulatorInfo clientInfo = new Gson().fromJson(rawClientInfo, RestSimulatorInfo.class);
+        service.connectSimulator(clientInfo);
 
         Client client = Client.create();
         WebResource resource = client.resource(clientInfo.getEndPointAddress()).path("connected");
@@ -41,7 +41,7 @@ public class DisisRestResource {
     }
 
     @POST
-    @Path("send-internal-message")
+    @Path("send-message")
     @Consumes(MediaType.APPLICATION_JSON)
     public void sendMessage(String rawMessage) {
         RestMessage restMessage = new Gson().fromJson(rawMessage, RestMessage.class);
