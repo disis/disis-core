@@ -12,12 +12,15 @@ import disis.core.net.listeners.ConsoleListener;
 import disis.core.net.listeners.MessageListener;
 import disis.core.rest.IRestServer;
 import disis.core.rest.PushRestServer;
+import disis.core.rest.content.RestNullMessageRequestMessage;
 import disis.core.rest.content.RestSimulatorInfo;
 import disis.core.utils.ThreadHelper;
 
 import java.rmi.RemoteException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is DISIS
@@ -30,6 +33,7 @@ public class DisisService {
     private final IRestServer restServer;
     private final LocalConfiguration configuration;
     private Map<String, Map<String, Double>> lastDistributedTimestamps = new HashMap<>();
+    private Set<RestSimulatorInfo> runningSimulators = new HashSet<>();
 
     public Map<String, ConnectionInfo> getConnectedSurrounding() {
         return connectedSurrounding;
@@ -150,22 +154,32 @@ public class DisisService {
         }
 
         sendConnectedSimulatorMessage(simulatorInfo.getRemoteName());
-        if(isFulfilledDependencies(simulatorInfo)) {
-            sendReadyMessageForSimulation(simulatorInfo.getRemoteName());
-            for (String remoteSimulator : simulatorInfo.getSurroundingSimulators()) {
-                sendNullMessageRequest(remoteSimulator);
+
+        for (RestSimulatorInfo localSimulator : localSimulators.values()) {
+            if (isFulfilledDependencies(localSimulator) && !runningSimulators.contains(localSimulator)) {
+                runningSimulators.add(localSimulator);
+                sendReadyMessageForSimulation(localSimulator.getRemoteName());
+                for (String remoteSimulator : localSimulator.getSurroundingSimulators()) {
+                    sendNullMessageRequest(localSimulator.getRemoteName(), remoteSimulator);
+                }
             }
         }
     }
 
-    private void sendNullMessageRequest(String remoteSimulatorName) {
-        IMessage nullMessageRequestMessage = MessageBuilder.createNullMessageRequestMessage(getFullName(), remoteSimulatorName);
-        String remoteDisisName = remoteSimulators.get(remoteSimulatorName);
-        ConnectionInfo remoteDisisInfo = connectedSurrounding.get(remoteDisisName);
-        try {
-            communicator.sendMessage(nullMessageRequestMessage, remoteDisisInfo.getInbox());
-        } catch (DisisCommunicatorException e) {
-            throw new DisisException(e);
+    private void sendNullMessageRequest(String requester, String remoteSimulatorName) {
+        if (localSimulators.containsKey(remoteSimulatorName)) {
+            Double currentLVT = lastDistributedTimestamps.get(requester).get(remoteSimulatorName);
+            pushRestServer.sendNullMessageRequest(localSimulators.get(remoteSimulatorName), new RestNullMessageRequestMessage(requester, remoteSimulatorName, currentLVT));
+        } else {
+            // :)
+//        IMessage nullMessageRequestMessage = MessageBuilder.createNullMessageRequestMessage(getFullName(), remoteSimulatorName);
+//        String remoteDisisName = remoteSimulators.get(remoteSimulatorName);
+//        ConnectionInfo remoteDisisInfo = connectedSurrounding.get(remoteDisisName);
+//        try {
+//            communicator.sendMessage(nullMessageRequestMessage, remoteDisisInfo.getInbox());
+//        } catch (DisisCommunicatorException e) {
+//            throw new DisisException(e);
+//        }
         }
     }
 
@@ -176,7 +190,7 @@ public class DisisService {
     private boolean isFulfilledDependencies(RestSimulatorInfo simulatorInfo) {
         // Simulator dependencies
         for(String remoteSimulator : simulatorInfo.getSurroundingSimulators()) {
-            if(!localSimulators.containsKey(remoteSimulator) || !remoteSimulators.containsKey(remoteSimulator))
+            if(!localSimulators.containsKey(remoteSimulator) && !remoteSimulators.containsKey(remoteSimulator))
                 return false;
         }
         return true;

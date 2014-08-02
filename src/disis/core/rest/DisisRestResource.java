@@ -31,6 +31,7 @@ public class DisisRestResource {
     @Path("connect")
     @Consumes(MediaType.APPLICATION_JSON)
     public void connect(String rawClientInfo) {
+        System.out.println("connect");
         RestSimulatorInfo clientInfo = new Gson().fromJson(rawClientInfo, RestSimulatorInfo.class);
         service.connectSimulator(clientInfo);
     }

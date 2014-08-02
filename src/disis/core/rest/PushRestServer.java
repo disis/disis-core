@@ -1,8 +1,12 @@
 package disis.core.rest;
 
+import com.google.gson.Gson;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
+import disis.core.rest.content.RestNullMessageRequestMessage;
 import disis.core.rest.content.RestSimulatorInfo;
+
+import javax.ws.rs.core.MediaType;
 
 /**
  * This is DISIS
@@ -18,5 +22,11 @@ public class PushRestServer {
     private WebResource createResource(RestSimulatorInfo simulatorInfo, String method) {
         Client client = Client.create();
         return client.resource(simulatorInfo.getEndPointAddress()).path(method);
+    }
+
+    public void sendNullMessageRequest(RestSimulatorInfo simulatorInfo, RestNullMessageRequestMessage message) {
+        WebResource resource = createResource(simulatorInfo, "null-message-request");
+        Gson gson = new Gson();
+        resource.type(MediaType.APPLICATION_JSON).post(gson.toJson(message));
     }
 }

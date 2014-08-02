@@ -5,10 +5,9 @@ import com.google.gson.annotations.SerializedName;
 /**
  * This is DISIS
  * Authors: Jirka Penzes & Jan Voracek
- * Date: 04/06/14 00:32
+ * Date: 2. 8. 2014 15:13
  */
-public class RestMessage {
-
+public class RestNullMessageRequestMessage {
     // fast-food-ii
     @SerializedName("from")
     public String from;
@@ -21,14 +20,7 @@ public class RestMessage {
     @SerializedName("message")
     public String message;
 
-    public RestMessage() {
-    }
 
-    public RestMessage(String from, String to, String message) {
-        this.from = from;
-        this.to = to;
-        this.message = message;
-    }
 
     public String getFrom() {
         return from;
@@ -40,5 +32,23 @@ public class RestMessage {
 
     public String getMessage() {
         return message;
+    }
+
+    @SerializedName("current-lvt")
+    private double currentLVT;
+
+    public RestNullMessageRequestMessage() {
+    }
+
+    public RestNullMessageRequestMessage(String from, String to, double currentLVT) {
+        this.from = from;
+        this.to = to;
+        this.message = "null";
+        this.currentLVT = currentLVT;
+    }
+
+    public double getCurrentLVT() {
+    
+        return currentLVT;
     }
 }
