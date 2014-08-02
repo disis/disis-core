@@ -29,6 +29,7 @@ public class DisisService {
     private final DisisCommunicator communicator;
     private final IRestServer restServer;
     private final LocalConfiguration configuration;
+    private Map<String, Map<String, Double>> lastDistributedTimestamps = new HashMap<>();
 
     public Map<String, ConnectionInfo> getConnectedSurrounding() {
         return connectedSurrounding;
@@ -93,7 +94,7 @@ public class DisisService {
         }
     }
 
-    private void connectToSurroundingServices() throws RemoteException {
+    private void connectToSurroundingServices() throws DisisCommunicatorException {
             for (DisisConfiguration disisConfiguration : configuration.getSurroundingServices()) {
                 synchronized (locker) {
                     ConnectionInfo connectionInfo = communicator.connect(disisConfiguration);
@@ -107,13 +108,16 @@ public class DisisService {
         setReadyForSimulators(true);
     }
 
-    private void waitForConnections() throws RemoteException {
+    private void waitForConnections() throws DisisCommunicatorException {
         for (ConnectionInfo connectionInfo : connectedSurrounding.values()) {
             IMessageInbox messageInbox = connectionInfo.getInbox();
-
-            while (!messageInbox.getReceivedMessages().stream()
-                    .anyMatch(message -> message instanceof ReadyMessage)) {
-                ThreadHelper.sleep(1000);
+            try {
+                while (!messageInbox.getReceivedMessages().stream()
+                        .anyMatch(message -> message instanceof ReadyMessage)) {
+                    ThreadHelper.sleep(1000);
+                }
+            } catch (RemoteException e) {
+                throw new DisisCommunicatorException(e);
             }
             System.out.println("Received ReadyMessage");
             connectionInfo.setReady(true);
@@ -140,9 +144,28 @@ public class DisisService {
 
     public void connectSimulator(RestSimulatorInfo simulatorInfo) {
         localSimulators.put(simulatorInfo.getRemoteName(), simulatorInfo);
+        lastDistributedTimestamps.put(simulatorInfo.getRemoteName(), new HashMap<>());
+        for (String remoteSimulator : simulatorInfo.getSurroundingSimulators()) {
+            lastDistributedTimestamps.get(simulatorInfo.getRemoteName()).put(remoteSimulator, 0.0);
+        }
+
         sendConnectedSimulatorMessage(simulatorInfo.getRemoteName());
         if(isFulfilledDependencies(simulatorInfo)) {
             sendReadyMessageForSimulation(simulatorInfo.getRemoteName());
+            for (String remoteSimulator : simulatorInfo.getSurroundingSimulators()) {
+                sendNullMessageRequest(remoteSimulator);
+            }
+        }
+    }
+
+    private void sendNullMessageRequest(String remoteSimulatorName) {
+        IMessage nullMessageRequestMessage = MessageBuilder.createNullMessageRequestMessage(getFullName(), remoteSimulatorName);
+        String remoteDisisName = remoteSimulators.get(remoteSimulatorName);
+        ConnectionInfo remoteDisisInfo = connectedSurrounding.get(remoteDisisName);
+        try {
+            communicator.sendMessage(nullMessageRequestMessage, remoteDisisInfo.getInbox());
+        } catch (DisisCommunicatorException e) {
+            throw new DisisException(e);
         }
     }
 
@@ -169,5 +192,14 @@ public class DisisService {
         } catch (DisisCommunicatorException e) {
             e.printStackTrace(); // todo: handle this
         }
+    }
+
+    public void updateLVT(RestSimulatorInfo clientInfo, double localVirtualTime) {
+        /*for( : lastDistributedTimestamps.get(clientInfo.getRemoteName())) {
+            if (simulatorCounter.getTimeStamp = localVirtualTime) {
+                request();
+            }
+        }
+*/
     }
 }

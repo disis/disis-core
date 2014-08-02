@@ -14,4 +14,8 @@ public final class MessageBuilder {
     public static IMessage createReadyBroadcastMessage(String senderFullName) {
         return new ReadyMessage(senderFullName);
     }
+
+    public static IMessage createNullMessageRequestMessage(String senderFullName, String simulatorName) {
+        return new NullMessageRequestMessage(senderFullName, simulatorName);
+    }
 }

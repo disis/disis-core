@@ -1,12 +1,11 @@
 package disis.core.rest;
 
 import com.google.gson.Gson;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
 import disis.core.DisisService;
 import disis.core.StaticContext;
-import disis.core.rest.content.RestSimulatorInfo;
 import disis.core.rest.content.RestMessage;
+import disis.core.rest.content.RestSimulatorInfo;
+import disis.core.rest.content.RestUpdateMessage;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -34,10 +33,14 @@ public class DisisRestResource {
     public void connect(String rawClientInfo) {
         RestSimulatorInfo clientInfo = new Gson().fromJson(rawClientInfo, RestSimulatorInfo.class);
         service.connectSimulator(clientInfo);
+    }
 
-        Client client = Client.create();
-        WebResource resource = client.resource(clientInfo.getEndPointAddress()).path("connected");
-        resource.post();
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("update-simulation-timestamp")
+    public void updateSimulationTimestamp(String rawUpdateMessage) {
+        RestUpdateMessage updateMessage = new Gson().fromJson(rawUpdateMessage, RestUpdateMessage.class);
+        service.updateLVT(updateMessage.getClientInfo(), updateMessage.getLocalVirtualTime());
     }
 
     @POST
@@ -46,11 +49,5 @@ public class DisisRestResource {
     public void sendMessage(String rawMessage) {
         RestMessage restMessage = new Gson().fromJson(rawMessage, RestMessage.class);
         // service.sendMessage(restMessage);
-    }
-
-    @POST
-    @Path("test")
-    public String test() {
-        return "hello";
     }
 }

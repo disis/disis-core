@@ -2,6 +2,8 @@ package disis.core.rest.content;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * This is DISIS
  * Authors: Jirka Penzes & Jan Voracek
@@ -27,7 +29,7 @@ public class RestSimulatorInfo {
 
     // ["fast-food-I", "highway-I"]
     @SerializedName("surrounding-simulators")
-    public Iterable<String> surroundingSimulators;
+    public List<String> surroundingSimulators;
 
     public String getTitle() {
         return title;
@@ -45,7 +47,7 @@ public class RestSimulatorInfo {
         return endPointAddress;
     }
 
-    public Iterable<String> getSurroundingSimulators() {
+    public List<String> getSurroundingSimulators() {
         return surroundingSimulators;
     }
 }
